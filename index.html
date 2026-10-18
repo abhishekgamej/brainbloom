@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BrainBloom — Brain Gym</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3eeff;--card:#fff;--ink:#2a1b4d;--mut:#6b5d8f;--pur:#7c3aed;--pur2:#a78bfa;--teal:#0d9488;--yel:#fbbf24;--bad:#e11d48;--good:#059669;--line:#e1d8f7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171030;--card:#251a49;--ink:#f4efff;--mut:#b6a9de;--pur:#8b5cf6;--teal:#2dd4bf;--line:#3b2d6b;--good:#34d399;--bad:#fb7185}}
+:root[data-theme="dark"]{--bg:#171030;--card:#251a49;--ink:#f4efff;--mut:#b6a9de;--pur:#8b5cf6;--teal:#2dd4bf;--line:#3b2d6b;--good:#34d399;--bad:#fb7185}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Baloo 2','Noto Sans Devanagari',system-ui,sans-serif;font-size:19px;line-height:1.35;min-height:100vh}
+#app{max-width:520px;margin:0 auto;padding:12px 16px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;min-height:46px;cursor:pointer}
+.chip.on{background:var(--pur);border-color:var(--pur);color:#fff}
+.btn{display:block;width:100%;border:0;border-radius:20px;padding:16px;min-height:60px;font:inherit;font-size:22px;font-weight:800;color:#fff;background:var(--pur);cursor:pointer;margin:10px 0;box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn.teal{background:var(--teal)}.btn.yel{background:var(--yel);color:#3b2a00}.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px;margin:10px 0}
+h1,h2,h3{margin:0 0 6px;line-height:1.15}h2{font-size:28px}small,.mut{color:var(--mut)}
+.logo{text-align:center;padding:14px 0 6px}.logo h1{font-size:44px;font-weight:800;color:var(--pur)}.logo p{margin:0;font-size:20px;color:var(--teal);font-weight:700}
+.bloom{width:120px;height:120px;margin:0 auto 4px;animation:sway 4s ease-in-out infinite}
+@keyframes sway{50%{transform:rotate(6deg) scale(1.04)}}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.mode{display:flex;align-items:center;gap:14px;text-align:left;width:100%;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:22px;padding:14px;margin:10px 0;font:inherit;cursor:pointer;min-height:84px}
+.mode .ic{font-size:36px;width:60px;height:60px;border-radius:18px;display:grid;place-items:center;flex:none}
+.mode b{font-size:22px;display:block}
+.bar{height:16px;border-radius:9px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--yel));transition:width .5s}
+.seq{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+.seq span{min-width:52px;height:52px;padding:0 8px;border-radius:14px;background:var(--bg);border:2px solid var(--line);display:grid;place-items:center;font-size:26px;font-weight:800}
+.seq span.q{background:var(--yel);color:#3b2a00;border-color:var(--yel)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{min-height:72px;border-radius:18px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:24px;font-weight:800;padding:8px;cursor:pointer}
+.opt.good{background:var(--good);border-color:var(--good);color:#fff;animation:pop .35s}
+.opt.bad{background:var(--bad);border-color:var(--bad);color:#fff;animation:shake .35s}
+.opts.one{grid-template-columns:1fr}.opts.one .opt{font-size:21px;text-align:left;padding:12px 16px}
+@keyframes pop{50%{transform:scale(1.07)}}@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{border-radius:18px;padding:14px;margin-top:12px;font-size:19px}.fb.good{background:rgba(5,150,105,.15);border:2px solid var(--good)}.fb.bad{background:rgba(225,29,72,.12);border:2px solid var(--bad)}
+.tiles{display:grid;gap:10px;margin:14px 0}.tile{aspect-ratio:1;border-radius:20px;border:0;opacity:.55;cursor:pointer;transition:opacity .1s,transform .1s}
+.tile.lit{opacity:1;transform:scale(1.07);box-shadow:0 0 0 5px #fff8,0 0 24px currentColor}
+.badge{display:inline-flex;flex-direction:column;align-items:center;width:30%;margin:4px 1%;text-align:center;font-size:14px;vertical-align:top}
+.badge .e{font-size:34px;width:58px;height:58px;display:grid;place-items:center;border-radius:50%;background:var(--bg);border:2px solid var(--line)}.badge.lock{opacity:.35;filter:grayscale(1)}
+.big{font-size:54px;font-weight:800;color:var(--pur);text-align:center;line-height:1}
+.log{border-top:1px solid var(--line);padding:8px 0;font-size:17px}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;z-index:9}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div id="app"></div>
+<script>
+const T={play:['Play','खेलें'],daily:['Daily Challenge','आज की चुनौती'],progress:['Progress','प्रगति'],settings:['Settings','सेटिंग्स'],modes:['Choose a game','खेल चुनें'],
+pat:['Pattern Play','पैटर्न प्ले'],mem:['Memory Flash','मेमोरी फ्लैश'],log:['Logic Lab','लॉजिक लैब'],qq:['Quick Quest','क्विक क्वेस्ट'],
+patd:['Find what comes next','अगला क्या आएगा, खोजें'],memd:['Watch, then repeat the tiles','देखें, फिर टाइल दोहराएं'],logd:['Think it through','सोचकर हल करें'],qqd:['Fast number puzzles','तेज़ गिनती की पहेलियाँ'],
+d0:['Easy','आसान'],d1:['Medium','मध्यम'],d2:['Hard','कठिन'],pick:['Pick difficulty','कठिनाई चुनें'],timed:['Timed (15s)','समय के साथ (15 सेकंड)'],relaxed:['No timer','बिना टाइमर'],
+next:['Next','आगे'],finish:['See results','नतीजे देखें'],ok:['Correct!','सही!'],no:['Not quite','थोड़ा चूके'],tu:["Time's up",'समय खत्म'],watch:['Watch carefully…','ध्यान से देखें…'],yours:['Your turn!','आपकी बारी!'],
+score:['Score','स्कोर'],xp:['XP earned','XP मिला'],replay:['Play again','फिर खेलें'],home:['Home','होम'],back:['← Back','← वापस'],lvl:['Level','स्तर'],badges:['Badges','बैज'],solved:['Puzzles solved','हल की गई पहेलियाँ'],best:['Best scores','सर्वश्रेष्ठ स्कोर'],
+sound:['Sound','आवाज़'],lang:['Language','भाषा'],reset:['Reset progress','प्रगति मिटाएं'],sure:['Tap again to confirm','पक्का करने के लिए फिर दबाएं'],
+note:['For fun and practice only. Not a medical or IQ tool.','सिर्फ मज़े और अभ्यास के लिए। यह चिकित्सा या IQ टूल नहीं है।'],saved:['Progress is saved on this phone only.','प्रगति सिर्फ इस फोन में सेव होती है।'],
+done:['Done today ✓','आज पूरा ✓'],bonus:['Bonus +50 XP','बोनस +50 XP'],on:['On','चालू'],off:['Off','बंद'],tap:['Tap the tiles in order','टाइल क्रम से दबाएं'],q:['Question','सवाल'],round:['Round','राउंड'],
+tagline:['Brain Gym','दिमाग़ की कसरत'],oops:['Something went wrong. Tap Home to continue.','कुछ गड़बड़ हुई। जारी रखने के लिए होम दबाएं।']};
+const B=[['first','🌱',['First Bloom','पहला फूल']],['perfect','⭐',['Perfect Round','परफेक्ट राउंड']],['all4','🧩',['Explorer','खोजी']],['hard','🔥',['Brave Mind','साहसी']],['xp500','👑',['500 XP','500 XP']],['daily','📅',['Daily Player','रोज़ का खिलाड़ी']]];
+const P=[
+{id:'p1',d:0,s:[2,4,6,8],o:[9,10,12,11],a:1,e:['Add 2 each time: 8 + 2 = 10.','हर बार 2 जोड़ें: 8 + 2 = 10।']},
+{id:'p2',d:0,s:['🔴','🔵','🔴','🔵','🔴'],o:['🔴','🔵','🟢','🟡'],a:1,e:['Red and blue take turns, so blue is next.','लाल और नीला बारी-बारी आते हैं, इसलिए नीला आगे है।']},
+{id:'p3',d:0,s:[5,10,15,20],o:[22,30,25,24],a:2,e:['Count by 5s: 20 + 5 = 25.','5-5 करके गिनें: 20 + 5 = 25।']},
+{id:'p4',d:0,s:['▲','■','▲','■','▲'],o:['▲','●','■','★'],a:2,e:['Triangle and square alternate.','त्रिकोण और चौकोर बारी-बारी आते हैं।']},
+{id:'p5',d:1,s:[1,2,4,8,16],o:[24,32,20,18],a:1,e:['Each number doubles: 16 × 2 = 32.','हर संख्या दोगुनी होती है: 16 × 2 = 32।']},
+{id:'p6',d:1,s:[2,5,8,11],o:[13,15,14,12],a:2,e:['Add 3 each time: 11 + 3 = 14.','हर बार 3 जोड़ें: 11 + 3 = 14।']},
+{id:'p7',d:1,s:['🟣','🟣','🟡','🟣','🟣','🟡','🟣','🟣'],o:['🟣','🟡','🔵','🔴'],a:1,e:['The group is purple, purple, yellow. Yellow is next.','समूह है बैंगनी, बैंगनी, पीला। अब पीला आएगा।']},
+{id:'p8',d:1,s:['●','○','○','●','○','○','●','○'],o:['●','○','■','▲'],a:1,e:['The group ● ○ ○ repeats. We have ● ○, so ○ is next.','● ○ ○ दोहराता है। अभी ● ○ आया, तो ○ आगे है।']},
+{id:'p9',d:2,s:[1,1,2,3,5,8],o:[11,12,13,14],a:2,e:['Add the last two numbers: 5 + 8 = 13.','पिछली दो संख्याएँ जोड़ें: 5 + 8 = 13।']},
+{id:'p10',d:2,s:[2,6,18,54],o:[108,162,72,160],a:1,e:['Multiply by 3 each time: 54 × 3 = 162.','हर बार 3 से गुणा: 54 × 3 = 162।']},
+{id:'p11',d:2,s:[1,4,9,16,25],o:[30,35,36,49],a:2,e:['Square numbers: 6 × 6 = 36.','वर्ग संख्याएँ: 6 × 6 = 36।']},
+{id:'p12',d:2,s:[100,91,83,76,70],o:[64,65,66,60],a:1,e:['Subtract 9, 8, 7, 6, then 5: 70 − 5 = 65.','9, 8, 7, 6 फिर 5 घटाएँ: 70 − 5 = 65।']}];
+const G0=[
+{id:'l1',d:0,q:['Which one is a vegetable?','कौन सी सब्ज़ी है?'],o:['🍎','🍌','🥕','🍇'],a:2,e:['The carrot is a vegetable. The others are fruits.','गाजर सब्ज़ी है। बाकी फल हैं।']},
+{id:'l2',d:0,q:['Ravi has 3 apples, gets 4 more, then gives away 2. How many are left?','रवि के पास 3 सेब हैं, 4 और मिले, फिर 2 दे दिए। कितने बचे?'],o:[4,5,6,7],a:1,e:['3 + 4 = 7, then 7 − 2 = 5.','3 + 4 = 7, फिर 7 − 2 = 5।']},
+{id:'l3',d:0,q:['All cats are animals. Tom is a cat. So Tom is…','सभी बिल्लियाँ जानवर हैं। टॉम बिल्ली है। तो टॉम…'],o:[['an animal','जानवर है'],['a plant','पौधा है'],['a bird','पक्षी है'],['a fish','मछली है']],a:0,e:['If all cats are animals, Tom must be an animal.','अगर सभी बिल्लियाँ जानवर हैं, तो टॉम जानवर है।']},
+{id:'l4',d:1,q:['Anu is taller than Binu. Binu is taller than Chitra. Who is the shortest?','अनु, बिनु से लंबी है। बिनु, चित्रा से लंबी है। सबसे छोटा कौन?'],o:[['Anu','अनु'],['Binu','बिनु'],['Chitra','चित्रा'],['Same','बराबर']],a:2,e:['Anu > Binu > Chitra, so Chitra is shortest.','अनु > बिनु > चित्रा, इसलिए चित्रा सबसे छोटी है।']},
+{id:'l5',d:1,q:['Which is heavier: 1 kg of cotton or 1 kg of iron?','कौन भारी है: 1 किलो रुई या 1 किलो लोहा?'],o:[['Cotton','रुई'],['Iron','लोहा'],['Same','बराबर'],['Cannot say','कह नहीं सकते']],a:2,e:['Both weigh 1 kg, so they are equal.','दोनों 1 किलो हैं, इसलिए बराबर।']},
+{id:'l6',d:1,q:['Today is Friday. What day was it 2 days ago?','आज शुक्रवार है। 2 दिन पहले कौन सा दिन था?'],o:[['Tuesday','मंगलवार'],['Wednesday','बुधवार'],['Thursday','गुरुवार'],['Saturday','शनिवार']],a:1,e:['Friday → Thursday → Wednesday.','शुक्रवार → गुरुवार → बुधवार।']},
+{id:'l7',d:1,q:['I am a number. Double me, add 3, and you get 11. Who am I?','मैं एक संख्या हूँ। मुझे दोगुना करो, 3 जोड़ो, तो 11 मिलता है। मैं कौन?'],o:[3,4,5,8],a:1,e:['4 × 2 = 8, and 8 + 3 = 11.','4 × 2 = 8, और 8 + 3 = 11।']},
+{id:'l8',d:2,q:['A pen and a notebook cost ₹110. The notebook costs ₹100 more than the pen. What does the pen cost?','पेन और कॉपी ₹110 की हैं। कॉपी पेन से ₹100 महंगी है। पेन कितने का है?'],o:['₹10','₹5','₹15','₹1'],a:1,e:['Pen ₹5, notebook ₹105: total ₹110, difference ₹100.','पेन ₹5, कॉपी ₹105: कुल ₹110, अंतर ₹100।']},
+{id:'l9',d:2,q:['5 machines make 5 toys in 5 minutes. How long for 100 machines to make 100 toys?','5 मशीनें 5 मिनट में 5 खिलौने बनाती हैं। 100 मशीनों को 100 खिलौनों में कितना समय लगेगा?'],o:['5','20','100','1'],a:0,e:['Each machine makes 1 toy in 5 minutes, so 100 machines make 100 toys in 5 minutes.','हर मशीन 5 मिनट में 1 खिलौना बनाती है, इसलिए 100 मशीनें 5 मिनट में 100 बनाएँगी।']},
+{id:'l10',d:2,q:["Sita's mother has 3 daughters: Gita, Rita and…?",'सीता की माँ की 3 बेटियाँ हैं: गीता, रीता और…?'],o:[['Sita','सीता'],['Mita','मीता'],['Nita','नीता'],['Unknown','पता नहीं']],a:0,e:["The question says Sita's mother, so the third daughter is Sita.",'सवाल में सीता की माँ है, इसलिए तीसरी बेटी सीता है।']},
+{id:'l11',d:2,q:['You are 5th from the left and 6th from the right in a row. How many people are in the row?','एक लाइन में आप बाएँ से 5वें और दाएँ से 6वें हैं। लाइन में कितने लोग हैं?'],o:[10,11,9,12],a:0,e:['5 + 6 = 11, but you are counted twice. 11 − 1 = 10.','5 + 6 = 11, पर आप दो बार गिने गए। 11 − 1 = 10।']}];
+const COL=['#ef4444','#3b82f6','#22c55e','#facc15','#a855f7','#f97316','#ec4899','#14b8a6','#92400e'];
+const MN={pat:'🔷',mem:'🎨',log:'💡',qq:'⚡'},MC={pat:'#7c3aed33',mem:'#14b8a633',log:'#fbbf2444',qq:'#ec489933'};
+let S={lang:'en',snd:true,xp:0,done:{},best:{},seen:[],badges:[],daily:'',sessions:0,tried:[]},G=null,scr='home',tm=null,timers=[],tw=false,rs=false;
+const hi=()=>S.lang==='hi',t=k=>T[k]?T[k][hi()?1:0]:k,L=x=>Array.isArray(x)?x[hi()?1:0]:x;
+const $=s=>document.querySelector(s),rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+function load(){try{const r=localStorage.getItem('bloom1');if(r)Object.assign(S,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('bloom1',JSON.stringify(S))}catch(e){}}
+let ac;function beep(f,d=.13){if(!S.snd)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
+function clr(){clearInterval(tm);timers.forEach(clearTimeout);timers=[]}
+const today=()=>new Date().toISOString().slice(0,10),lvl=()=>Math.floor(S.xp/100)+1;
+function go(s){clr();scr=s;render()}
+function hdr(back){return `<div class="top">${back?`<button class="chip" onclick="go('${back}')">${t('back')}</button>`:'<span class="chip" style="border:0;background:none">&nbsp;</span>'}<button class="chip" onclick="S.lang=hi()?'en':'hi';save();render()" aria-label="Language">${hi()?'EN | <b>हिं</b>':'<b>EN</b> | हिं'}</button></div>`}
+function render(){const a=$('#app');try{a.innerHTML=({home:rHome,modes:rModes,diff:rDiff,game:rGame,results:rRes,prog:rProg,set:rSet})[scr]();document.documentElement.lang=hi()?'hi':'en';if(scr==='game')afterGame()}catch(e){console.error(e);a.innerHTML=`<div class="card">${t('oops')}</div><button class="btn" onclick="go('home')">${t('home')}</button>`}}
+const bloom=`<svg class="bloom" viewBox="0 0 120 120"><g transform="translate(60 58)"><g fill="#7c3aed"><ellipse rx="16" ry="30" cy="-24"/><ellipse rx="16" ry="30" cy="-24" transform="rotate(72)"/><ellipse rx="16" ry="30" cy="-24" transform="rotate(144)" fill="#14b8a6"/><ellipse rx="16" ry="30" cy="-24" transform="rotate(216)" fill="#14b8a6"/><ellipse rx="16" ry="30" cy="-24" transform="rotate(288)"/></g><circle r="17" fill="#fbbf24"/><path d="M-8 -3q4-7 8-2q4-5 8 2M-8 3q4 7 8 2q4 5 8-2" stroke="#7a4a00" stroke-width="2.5" fill="none" stroke-linecap="round"/></g></svg>`;
+function rHome(){const d=today(),dm=['pat','mem','log','qq'][new Date().getDate()%4];return hdr()+`<div class="logo">${bloom}<h1>BrainBloom</h1><p>${t('tagline')}</p></div>
+<button class="btn" onclick="go('modes')">▶ ${t('play')}</button>
+<div class="card"><h3>📅 ${t('daily')}</h3><div class="mut">${MN[dm]} ${t(dm)} · ${t('d1')} · ${t('bonus')}</div>${S.daily===d?`<button class="btn ghost" onclick="start('${dm}',1,false)">${t('done')} — ${t('replay')}</button>`:`<button class="btn yel" onclick="start('${dm}',1,true)">${t('daily')}</button>`}</div>
+<div class="row"><button class="btn teal" onclick="go('prog')">🏆 ${t('progress')}</button><button class="btn ghost" onclick="go('set')">⚙ ${t('settings')}</button></div>
+<div class="card"><b>${t('lvl')} ${lvl()}</b> · ${S.xp} XP<div class="bar"><i style="width:${S.xp%100}%"></i></div></div><p class="mut" style="text-align:center;font-size:15px">${t('note')}</p>`}
+function rModes(){return hdr('home')+`<h2>${t('modes')}</h2>`+['pat','mem','log','qq'].map(m=>`<button class="mode" onclick="G0m='${m}';go('diff')"><span class="ic" style="background:${MC[m]}">${MN[m]}</span><span><b>${t(m)}</b><small>${t(m+'d')}</small></span></button>`).join('')}
+let G0m='pat',timedOpt=true;
+function rDiff(){return hdr('modes')+`<h2>${MN[G0m]} ${t(G0m)}</h2><p class="mut">${t('pick')}</p>`+(G0m==='qq'?`<div class="row" style="margin-bottom:6px"><button class="chip ${timedOpt?'on':''}" onclick="timedOpt=true;render()">⏱ ${t('timed')}</button><button class="chip ${!timedOpt?'on':''}" onclick="timedOpt=false;render()">🌿 ${t('relaxed')}</button></div>`:'')+[0,1,2].map(d=>`<button class="btn ${['teal','','yel'][d]}" onclick="start('${G0m}',${d},false)">${['🌱','🌿','🌳'][d]} ${t('d'+d)}</button>`).join('')}
+function pick(pool,d){const seen=new Set(S.seen);let a=shuf(pool).sort((x,y)=>Math.abs(x.d-d)-Math.abs(y.d-d)||(seen.has(x.id)-seen.has(y.id)));return shuf(a.slice(0,5))}
+function genQ(d){let a,b,c,r,x;if(d==0){a=rnd(2,12);b=rnd(2,9);if(Math.random()<.5){r=a+b;x=`${a} + ${b}`}else{if(a<b)[a,b]=[b,a];r=a-b;x=`${a} − ${b}`}}else if(d==1){if(Math.random()<.5){a=rnd(3,9);b=rnd(3,9);r=a*b;x=`${a} × ${b}`}else{a=rnd(12,59);b=rnd(11,39);r=a+b;x=`${a} + ${b}`}}else{a=rnd(3,9);b=rnd(3,9);c=rnd(5,30);if(Math.random()<.5){r=a*b+c;x=`${a} × ${b} + ${c}`}else{r=(a+c)*b;x=`(${a} + ${c}) × ${b}`}}
+const s=new Set([r]);while(s.size<4){const v=r+[-10,-2,-1,1,2,10][rnd(0,5)];if(v>=0)s.add(v)}const o=shuf([...s]);return{id:'q',q:[x+' = ?',x+' = ?'],o,a:o.indexOf(r),e:[x+' = '+r,x+' = '+r]}}
+function start(m,d,daily){clr();G={m,d,daily,i:0,ok:0,log:[],xp:0,timed:m==='qq'&&timedOpt,done:false};if(m==='pat')G.items=pick(P,d);else if(m==='log')G.items=pick(G0,d);else if(m==='qq')G.items=[0,1,2,3,4].map(()=>genQ(d));else G.items=[0,1,2,3,4];
+if(m==='pat'||m==='log')G.items.forEach(p=>{p.ord=shuf([0,1,2,3])});if(m==='qq')G.items.forEach(p=>{p.ord=[0,1,2,3]});
+G.ans=null;go('game')}
+function rGame(){const m=G.m,n=5;let h=hdr('modes')+`<div class="row" style="align-items:center"><b>${t(m)}</b><span class="mut" style="text-align:right">${t(m==='mem'?'round':'q')} ${G.i+1}/${n} · ✓ ${G.ok}</span></div><div class="bar"><i style="width:${G.i/n*100}%"></i></div>`;
+if(m==='mem')return h+`<div class="card" style="text-align:center"><h3 id="ms">${t('watch')}</h3><div class="mut" id="ml"></div><div class="tiles" id="tl" style="grid-template-columns:repeat(${G.n===4?2:3},1fr)"></div></div><div id="fbx"></div>`;
+const p=G.items[G.i];h+=`<div class="card">`+(G.timed?`<div class="bar"><i id="tb" style="width:100%"></i></div>`:'');
+if(m==='pat')h+=`<h3 style="text-align:center">${t('patd')}</h3><div class="seq">${p.s.map(v=>`<span>${v}</span>`).join('')}<span class="q">?</span></div>`;else h+=`<h3 style="${m==='qq'?'text-align:center;font-size:40px;margin:16px 0':''}">${L(p.q)}</h3>`;
+const one=m==='log'&&p.o.some(v=>String(L(v)).length>3);
+h+=`<div class="opts ${one?'one':''}" style="margin-top:12px">${p.ord.map((oi,k)=>`<button class="opt" id="o${k}" onclick="ans(${k})">${L(p.o[oi])}</button>`).join('')}</div><div id="fbx"></div></div>`;return h}
+function afterGame(){if(G.m==='mem'){if(!G.running)memRound();else memRestore()}else if(G.timed&&G.ans===null)timer();else if(G.ans!==null)showFb()}
+function timer(){let left=15;clearInterval(tm);tm=setInterval(()=>{left-=.1;const b=$('#tb');if(b)b.style.width=Math.max(0,left/15*100)+'%';if(left<=0){clearInterval(tm);ans(-1)}},100)}
+function ans(k){if(G.ans!==null)return;clearInterval(tm);const p=G.items[G.i];G.ans=k;const ok=k>=0&&p.ord[k]===p.a;if(ok)G.ok++;G.log.push({ok,q:G.m==='pat'?p.s.join(' ')+' ?':L(p.q),exp:p.e,to:k<0});beep(ok?660:200);if(ok)beep(880,.15);G.last=ok;
+const cb=p.ord.indexOf(p.a);const c=$('#o'+cb);if(c)c.classList.add('good');if(!ok&&k>=0)$('#o'+k).classList.add('bad');showFb()}
+function showFb(){const p=G.items[G.i],ok=G.last,k=G.ans;if(G.ans>=0){const c=$('#o'+p.ord.indexOf(p.a)),b=$('#o'+G.ans);if(c)c.classList.add('good');if(!ok&&b)b.classList.add('bad')}else{const c=$('#o'+p.ord.indexOf(p.a));if(c)c.classList.add('good')}
+document.querySelectorAll('.opt').forEach(o=>o.disabled=true);const last=G.i===4;$('#fbx').innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?'🌸 '+t('ok'):(k<0?'⏰ '+t('tu'):'💭 '+t('no'))}</b><br>${L(p.e)}</div><button class="btn teal" onclick="nextQ()">${last?t('finish'):t('next')}</button>`}
+function nextQ(){if(G.i>=4){finish();return}G.i++;G.ans=null;G.running=false;render()}
+function memRound(){G.running=true;G.n=G.d===0?4:G.d===1?6:9;const len=[3,4,5][G.d]+G.i;G.len=len;G.seq=Array.from({length:len},()=>rnd(0,G.n-1));G.pos=0;G.phase='watch';G.fin=false;
+const tl=$('#tl');tl.style.gridTemplateColumns=`repeat(${G.n===4?2:3},1fr)`;tl.innerHTML=Array.from({length:G.n},(_,i)=>`<button class="tile" id="t${i}" style="background:${COL[i]};color:${COL[i]}" onclick="tapTile(${i})" aria-label="tile ${i+1}"></button>`).join('');$('#ml').textContent=len+' ✦';
+G.seq.forEach((v,j)=>{timers.push(setTimeout(()=>flash(v),900+j*750))});timers.push(setTimeout(()=>{G.phase='in';const s=$('#ms');if(s)s.textContent=t('yours')},900+len*750))}
+function memRestore(){}
+function flash(i){const e=$('#t'+i);if(!e)return;e.classList.add('lit');beep(300+i*70,.25);timers.push(setTimeout(()=>e&&e.classList.remove('lit'),450))}
+function tapTile(i){if(G.phase!=='in')return;flash(i);if(G.seq[G.pos]!==i){G.phase='end';memEnd(false);return}G.pos++;if(G.pos===G.len){G.phase='end';memEnd(true)}}
+function memEnd(ok){if(ok)G.ok++;G.log.push({ok,q:t('round')+' '+(G.i+1)+' · '+G.len+' ✦',exp:ok?['You repeated all '+G.len+' tiles in order.','आपने सभी '+G.len+' टाइल क्रम से दोहराए।']:['The tile at step '+(G.pos+1)+' was different. Try watching the order as a story.','चरण '+(G.pos+1)+' की टाइल अलग थी। क्रम को कहानी की तरह याद करने की कोशिश करें।']});beep(ok?760:200,.2);
+$('#ms').textContent=ok?'🌸 '+t('ok'):'💭 '+t('no');const last=G.i===4,l=G.log[G.log.length-1];$('#fbx').innerHTML=`<div class="fb ${ok?'good':'bad'}">${L(l.exp)}</div><button class="btn teal" onclick="nextQ()">${last?t('finish'):t('next')}</button>`}
+function finish(){const m=G.m;let xp=G.ok*10*(G.d+1)+20;const first=G.daily&&S.daily!==today();if(first){xp+=50;S.daily=today()}G.xp=xp;S.xp+=xp;S.sessions++;S.done[m]=(S.done[m]||0)+G.ok;const k=m+G.d;S.best[k]=Math.max(S.best[k]||0,G.ok);
+if(!S.tried.includes(m))S.tried.push(m);G.items.forEach(p=>{if(p.id&&p.id!=='q'&&!S.seen.includes(p.id))S.seen.push(p.id)});if(S.seen.length>18)S.seen=S.seen.slice(-8);
+const nb=[];const add=id=>{if(!S.badges.includes(id)){S.badges.push(id);nb.push(id)}};add('first');if(G.ok===5)add('perfect');if(S.tried.length>=4)add('all4');if(G.d===2)add('hard');if(S.xp>=500)add('xp500');if(first)add('daily');G.nb=nb;save();beep(880,.2);go('results')}
+function rRes(){const st=G.ok>=5?3:G.ok>=3?2:G.ok>=1?1:0;return hdr('home')+`<div class="card" style="text-align:center"><div style="font-size:44px">${'⭐'.repeat(st)||'🌱'}</div><div class="mut">${t('score')}</div><div class="big">${G.ok}/5</div><p><b>+${G.xp} XP</b> · ${t('lvl')} ${lvl()}</p>${(G.nb||[]).map(id=>{const b=B.find(x=>x[0]===id);return `<div>🎉 ${b[1]} ${L(b[2])}</div>`}).join('')}</div>
+<div class="card">${G.log.map((l,i)=>`<div class="log">${l.ok?'✅':'❌'} <b>${l.q}</b><br><small>${L(l.exp)}</small></div>`).join('')}</div>
+<button class="btn" onclick="start('${G.m}',${G.d},false)">🔁 ${t('replay')}</button><button class="btn ghost" onclick="go('modes')">${t('modes')}</button><button class="btn ghost" onclick="go('home')">${t('home')}</button>`}
+function rProg(){const dn=['0','1','2'];return hdr('home')+`<h2>${t('progress')}</h2><div class="card"><div class="big">${t('lvl')} ${lvl()}</div><p style="text-align:center;margin:6px 0">${S.xp} XP · ${100-S.xp%100} XP →</p><div class="bar"><i style="width:${S.xp%100}%"></i></div></div>
+<div class="card"><h3>${t('badges')}</h3>${B.map(b=>`<div class="badge ${S.badges.includes(b[0])?'':'lock'}"><div class="e">${b[1]}</div>${L(b[2])}</div>`).join('')}</div>
+<div class="card"><h3>${t('solved')}</h3>${['pat','mem','log','qq'].map(m=>`<div class="log">${MN[m]} ${t(m)}: <b>${S.done[m]||0}</b> <small>· ${t('best')}: ${dn.map(d=>t('d'+d)+' '+(S.best[m+d]||0)+'/5').join(', ')}</small></div>`).join('')}</div>`}
+let rc=0;
+function rSet(){return hdr('home')+`<h2>${t('settings')}</h2><div class="card"><b>${t('lang')}</b><div class="row" style="margin-top:8px"><button class="chip ${!hi()?'on':''}" onclick="S.lang='en';save();render()">English</button><button class="chip ${hi()?'on':''}" onclick="S.lang='hi';save();render()">हिन्दी</button></div></div>
+<div class="card"><b>${t('sound')}</b><div class="row" style="margin-top:8px"><button class="chip ${S.snd?'on':''}" onclick="S.snd=true;save();beep(600);render()">🔊 ${t('on')}</button><button class="chip ${!S.snd?'on':''}" onclick="S.snd=false;save();render()">🔇 ${t('off')}</button></div></div>
+<button class="btn ghost" id="rb" onclick="if(rs){S.xp=0;S.done={};S.best={};S.seen=[];S.badges=[];S.daily='';S.sessions=0;S.tried=[];save();rs=false;toast('✓');go('home')}else{rs=true;this.textContent=t('sure')}">${t('reset')}</button>
+<p class="mut" style="font-size:15px">${t('saved')}<br>${t('note')}</p>`}
+window.addEventListener('error',()=>{});load();render();
+</script></body></html>
